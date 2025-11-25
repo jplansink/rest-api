@@ -1,7 +1,6 @@
 import express from 'express';
 import authRoute from './auth.route';
 import userRoute from './user.route';
-import docsRoute from './docs.route';
 import healthRoute from './health.route';
 import config from '../../config/config';
 
@@ -13,15 +12,13 @@ const defaultRoutes = [
   { path: '/health', route: healthRoute }
 ];
 
-const devRoutes = [{ path: '/docs', route: docsRoute }];
-
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
 
 if (config.env === 'development') {
-  devRoutes.forEach((route) => {
-    router.use(route.path, route.route);
+  import('./docs.route').then((docsRoute) => {
+    router.use('/docs', docsRoute.default);
   });
 }
 
